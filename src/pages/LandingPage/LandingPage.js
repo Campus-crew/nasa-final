@@ -323,11 +323,12 @@ const LandingPage = () => {
   ];
 
   const teamMembers = [
-    { name: 'Dulatuly Nurasyl', role: 'Project Lead', initials: 'DN', linkedin: 'https://linkedin.com/in/dulatuly-nurasyl' },
-    { name: 'Yergaliyeva Dariya', role: 'Frontend Developer', initials: 'YD', linkedin: 'https://linkedin.com/in/yergaliyeva-dariya' },
-    { name: 'Yerlepes Bek', role: 'Backend Developer', initials: 'YB', linkedin: 'https://linkedin.com/in/yerlepes-bek' },
-    { name: 'Bazhikey Assel', role: 'UI/UX Designer', initials: 'BA', linkedin: 'https://linkedin.com/in/bazhikey-assel' },
-    { name: 'Serdar Dundar', role: 'Frontend Developer', initials: 'SD', linkedin: 'https://linkedin.com/in/serdar-dundar' },
+    { name: 'Dulatuly Nurasyl', role: 'Project Lead', initials: 'DN', linkedin: 'https://www.linkedin.com/in/goldentak/' },
+    { name: 'Yergaliyeva Dariya', role: 'Frontend Developer', initials: 'YD', linkedin: 'https://www.linkedin.com/in/dariya-yergaliyeva-783843358/' },
+    { name: 'Yerlepes Bek', role: 'Backend Developer', initials: 'YB', linkedin: 'https://www.linkedin.com/in/bek-yerlepes-632a23378/' },
+    { name: 'Bazhikey Assel', role: 'UI/UX Designer', initials: 'BA', linkedin: 'https://www.linkedin.com/in/assel-bazhikey-9a6547299/' },
+    { name: 'Serdar Dundar', role: 'Frontend Developer', initials: 'SD', linkedin: 'https://linkedin.com/in/serdar-dundar7' },
+    { name: 'Anel Yeraliyeva', role: 'Frontend Developer', initials: 'AY', linkedin: 'https://www.linkedin.com/in/anel-yeraliyeva-290a93302/' },
   ];
 
   return (

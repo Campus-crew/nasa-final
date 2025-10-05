@@ -28,3 +28,6 @@ public/*.mp4
 # Exclude very large images (>100MB)
 public/media/*42208x9870*
 public/media/*_large.*
+scripts/media/*.jpg
+scripts/media/*42208x9870*
+scripts/media/*_large.*
