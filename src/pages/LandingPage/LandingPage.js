@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
@@ -21,7 +21,35 @@ const HeroSection = styled.section`
   justify-content: center;
   text-align: center;
   position: relative;
-  background: var(--primary-bg);
+  background: 
+    radial-gradient(ellipse at center, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.8) 100%),
+    linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+  
+  /* Добавляем анимированные звезды как fallback */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+      radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+      radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+      radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.6), transparent),
+      radial-gradient(2px 2px at 160px 30px, #ddd, transparent);
+    background-repeat: repeat;
+    background-size: 200px 100px;
+    animation: sparkle 20s linear infinite;
+    opacity: 0.3;
+    z-index: -1;
+  }
+  
+  @keyframes sparkle {
+    from { transform: translateX(0); }
+    to { transform: translateX(200px); }
+  }
 `;
 
 const BackgroundVideo = styled.video`
@@ -32,7 +60,7 @@ const BackgroundVideo = styled.video`
   height: 100%;
   object-fit: cover;
   opacity: 0.5;
-  z-index: -2;
+  z-index: 1;
 `;
 
 const VideoOverlay = styled.div`
@@ -41,14 +69,15 @@ const VideoOverlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.8) 100%);
-  z-index: -1;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.7) 100%);
+  z-index: 2;
 `;
 
 const HeroContent = styled(motion.div)`
   max-width: 800px;
   padding: 2rem;
-  z-index: 1;
+  z-index: 10;
+  position: relative;
 `;
 
 const HeroTitle = styled(motion.h1)`
@@ -266,6 +295,10 @@ const MemberRole = styled.p`
 
 const LandingPage = () => {
   const { t } = useLanguage();
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [videoError, setVideoError] = useState(false);
+  
+  
   const { data: apodData, isLoading: apodLoading } = useQuery(
     'apod',
     () => nasaApiService.getAPOD(),
@@ -300,14 +333,26 @@ const LandingPage = () => {
   return (
     <LandingContainer>
       <HeroSection>
+        {/* Пробуем загрузить видео с fallback */}
         <BackgroundVideo
           autoPlay
           muted
           loop
           playsInline
+          preload="auto"
+          controls={false}
+          onError={(e) => setVideoError(true)}
+          onCanPlay={() => setVideoLoaded(true)}
+          style={{ 
+            display: videoError ? 'none' : 'block',
+            minWidth: '100%',
+            minHeight: '100%'
+          }}
         >
-          <source src="https://images-assets.nasa.gov/video/NHQ_2024_0101_New%20Year%20Message%20from%20NASA%20Administrator%20Bill%20Nelson/NHQ_2024_0101_New%20Year%20Message%20from%20NASA%20Administrator%20Bill%20Nelson~orig.mp4" type="video/mp4" />
-          <source src="/nasa-highlights-2024.mp4" type="video/mp4" />
+          <source src="/video.mp4" type="video/mp4" />
+          <source src="/files/spacex-crew-certification.mp4" type="video/mp4" />
+          <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
         </BackgroundVideo>
         <VideoOverlay />
         <HeroContent

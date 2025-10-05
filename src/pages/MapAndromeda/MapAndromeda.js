@@ -167,6 +167,11 @@ const MapAndromeda = () => {
           <InfoText>• Click & drag: Pan around</InfoText>
           <InfoText>• Zoom buttons: Smooth zoom</InfoText>
           <InfoText>• Progressive loading for optimal performance</InfoText>
+          
+          <InfoTitle style={{ marginTop: '1.5rem' }}>Star Exploration</InfoTitle>
+          <InfoText>• Click on star markers to view detailed information</InfoText>
+          <InfoText>• Star names appear when zoomed in</InfoText>
+          <InfoText>• Stars are color-coded by type and brightness</InfoText>
         </InfoSection>
       </LeftPanel>
 

@@ -211,9 +211,8 @@ const Navigation = () => {
     >
       <NavContent>
         <Logo to="/">
-          <div className="logo-icon">NASA</div>
-          <span className="sr-only">NASA</span>
-          EXPLORER
+          <div className="logo-icon">W</div>
+          WERNHER
         </Logo>
 
         <NavLinks isOpen={isOpen}>

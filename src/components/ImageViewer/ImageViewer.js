@@ -5,6 +5,8 @@ import SimpleTileManager from './SimpleTileManager';
 import ViewportManager from './ViewportManager';
 import Controls from './Controls';
 import InfoPanel from './InfoPanel';
+import StarMarkers from '../StarMarkers/StarMarkers';
+import StarModal from '../StarModal/StarModal';
 
 const ImageViewer = ({ selectedGalaxy }) => {
   const stageRef = useRef();
@@ -41,6 +43,10 @@ const ImageViewer = ({ selectedGalaxy }) => {
   const [debouncedViewport, setDebouncedViewport] = useState(viewport);
   const [isZooming, setIsZooming] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  
+  // Star modal state
+  const [selectedStar, setSelectedStar] = useState(null);
+  const [isStarModalOpen, setIsStarModalOpen] = useState(false);
   
   const viewportManager = useRef(new ViewportManager());
   const zoomTimeoutRef = useRef(null);
@@ -201,6 +207,17 @@ const ImageViewer = ({ selectedGalaxy }) => {
     animateZoom(0.2, 0, 0);
   }, [animateZoom]);
 
+  // Star interaction handlers
+  const handleStarClick = useCallback((star) => {
+    setSelectedStar(star);
+    setIsStarModalOpen(true);
+  }, []);
+
+  const handleCloseStarModal = useCallback(() => {
+    setIsStarModalOpen(false);
+    setSelectedStar(null);
+  }, []);
+
   // Removed unused functions - zoomIn, zoomOut, resetView
   // These are handled by the Controls component
 
@@ -269,6 +286,15 @@ const ImageViewer = ({ selectedGalaxy }) => {
             onInitialLoad={() => setIsInitialLoading(false)}
           />
         </Layer>
+        
+        {/* Star markers layer */}
+        <Layer>
+          <StarMarkers
+            selectedGalaxy={selectedGalaxy}
+            viewport={debouncedViewport}
+            onStarClick={handleStarClick}
+          />
+        </Layer>
       </Stage>
       
       {isInitialLoading && (
@@ -302,6 +328,13 @@ const ImageViewer = ({ selectedGalaxy }) => {
         viewport={viewport}
         imageData={imageData}
         visibleTiles={visibleTiles}
+      />
+      
+      {/* Star information modal */}
+      <StarModal
+        star={selectedStar}
+        isOpen={isStarModalOpen}
+        onClose={handleCloseStarModal}
       />
     </div>
   );
