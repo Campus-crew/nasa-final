@@ -341,18 +341,22 @@ const LandingPage = () => {
           playsInline
           preload="auto"
           controls={false}
-          onError={(e) => setVideoError(true)}
-          onCanPlay={() => setVideoLoaded(true)}
+          onError={(e) => {
+            console.log('Video error:', e.target.currentSrc);
+            setVideoError(true);
+          }}
+          onCanPlay={(e) => {
+            console.log('Video loaded:', e.target.currentSrc);
+            setVideoLoaded(true);
+          }}
           style={{ 
             display: videoError ? 'none' : 'block',
             minWidth: '100%',
             minHeight: '100%'
           }}
         >
-          {/* Using NASA SpaceX Crew Transportation video */}
+          {/* Using NASA SpaceX Crew Transportation video only */}
           <source src="https://images-assets.nasa.gov/video/NASA%20Certifies%20SpaceX%20Crew%20Transportation%20System%20for%20Regular%20Astronaut%20Flights%20to%20Space/NASA%20Certifies%20SpaceX%20Crew%20Transportation%20System%20for%20Regular%20Astronaut%20Flights%20to%20Space~orig.mp4" type="video/mp4" />
-          {/* Fallback to local video if NASA video fails */}
-          <source src="/video.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </BackgroundVideo>
         <VideoOverlay />
