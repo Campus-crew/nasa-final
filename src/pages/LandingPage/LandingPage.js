@@ -349,8 +349,8 @@ const LandingPage = () => {
             minHeight: '100%'
           }}
         >
-          {/* Замените эту ссылку на вашу облачную ссылку */}
-          <source src="ВАША_ОБЛАЧНАЯ_ССЫЛКА_ЗДЕСЬ" type="video/mp4" />
+          {/* Using external video sources */}
+          <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
           <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </BackgroundVideo>
