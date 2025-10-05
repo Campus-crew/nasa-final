@@ -25,3 +25,4 @@ yarn-error.log*
 # app static assets (do not push large media)
 /public/media/
 public/*.mp4
+/public/files/
