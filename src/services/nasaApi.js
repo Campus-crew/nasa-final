@@ -22,6 +22,66 @@ export const nasaApiService = {
     }
   },
 
+  // NASA Video Library API
+  searchVideos: async (query = 'space', page = 1) => {
+    try {
+      // Filter for astronomical content only, exclude human-focused content
+      const astronomicalQuery = query || 'galaxy planet nebula star solar system comet asteroid meteor';
+      
+      const response = await axios.get(`https://images-api.nasa.gov/search`, {
+        params: {
+          q: astronomicalQuery,
+          page,
+          media_type: 'video',
+          year_start: 2000,
+        },
+      });
+      
+      // Filter out videos with people/human content
+      if (response.data && response.data.collection && response.data.collection.items) {
+        const filteredItems = response.data.collection.items.filter(item => {
+          const title = item.data[0]?.title?.toLowerCase() || '';
+          const description = item.data[0]?.description?.toLowerCase() || '';
+          
+          // Exclude videos with human-related keywords
+          const humanKeywords = [
+            'astronaut', 'crew', 'interview', 'message', 'speech', 'talk',
+            'administrator', 'director', 'scientist', 'engineer', 'people',
+            'person', 'human', 'man', 'woman', 'team', 'staff', 'conference',
+            'meeting', 'announcement', 'press', 'briefing', 'ceremony'
+          ];
+          
+          const hasHumanContent = humanKeywords.some(keyword => 
+            title.includes(keyword) || description.includes(keyword)
+          );
+          
+          // Include videos with astronomical keywords
+          const astronomicalKeywords = [
+            'galaxy', 'planet', 'star', 'nebula', 'comet', 'asteroid', 'meteor',
+            'solar system', 'universe', 'cosmos', 'space', 'celestial', 'orbit',
+            'rotation', 'eclipse', 'aurora', 'satellite', 'telescope', 'hubble',
+            'webb', 'mars', 'jupiter', 'saturn', 'venus', 'mercury', 'earth',
+            'moon', 'sun', 'milky way', 'andromeda', 'supernova', 'black hole'
+          ];
+          
+          const hasAstronomicalContent = astronomicalKeywords.some(keyword => 
+            title.includes(keyword) || description.includes(keyword)
+          );
+          
+          return !hasHumanContent && hasAstronomicalContent;
+        });
+        
+        response.data.collection.items = filteredItems;
+        response.data.collection.metadata.total_hits = filteredItems.length;
+      }
+      
+      return response.data;
+    } catch (error) {
+      console.error('Error searching NASA videos:', error);
+      throw error;
+    }
+  },
+
   // Exoplanet Archive API
   searchExoplanets: async (query = '', limit = 1000) => {
     try {

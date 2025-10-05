@@ -39,6 +39,8 @@ const SearchIcon = styled.div`
   font-size: 1rem;
   pointer-events: none;
   font-weight: bold;
+  opacity: ${props => props.show ? 1 : 0};
+  transition: var(--transition);
 `;
 
 const ClearButton = styled.button`
@@ -97,12 +99,12 @@ const SearchBar = ({ value, onChange, placeholder, onSubmit }) => {
   return (
     <SearchContainer>
       <form onSubmit={handleSubmit}>
-        <SearchIcon>SEARCH</SearchIcon>
+        <SearchIcon show={localValue.length === 0}>SEARCH</SearchIcon>
         <SearchInput
           type="text"
           value={localValue}
           onChange={(e) => setLocalValue(e.target.value)}
-          placeholder={placeholder}
+          placeholder={localValue.length === 0 ? "" : placeholder}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}

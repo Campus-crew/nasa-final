@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const NavContainer = styled(motion.nav)`
   position: fixed;
@@ -9,7 +10,7 @@ const NavContainer = styled(motion.nav)`
   left: 0;
   right: 0;
   z-index: 1000;
-  background: rgba(0, 0, 0, 0.95);
+  background: rgba(6, 9, 18, 0.95);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border-color);
   padding: 1rem 2rem;
@@ -69,11 +70,13 @@ const NavLinks = styled.div`
     top: 100%;
     left: 0;
     right: 0;
-    background: rgba(0, 0, 0, 0.98);
+    background: rgba(6, 9, 18, 0.98);
     flex-direction: column;
     padding: 2rem;
     gap: 1.5rem;
     border-top: 1px solid var(--border-color);
+    backdrop-filter: blur(20px);
+  }
 `;
 
 const NavLink = styled(Link)`
@@ -113,6 +116,41 @@ const NavLink = styled(Link)`
   }
 `;
 
+const LanguageButton = styled.button`
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  color: var(--primary-text);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  font-family: var(--nasa-font);
+  font-weight: 500;
+  margin-left: 1rem;
+
+  &:hover {
+    background: var(--tertiary-bg);
+    border-color: var(--accent-text);
+  }
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+    margin-top: 1rem;
+  }
+`;
+
+const NavActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0;
+  }
+`;
+
 const MobileMenuButton = styled.button`
   display: none;
   background: none;
@@ -137,6 +175,7 @@ const MobileMenuButton = styled.button`
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { language, toggleLanguage, t } = useLanguage();
   const location = useLocation();
 
   useEffect(() => {
@@ -153,10 +192,12 @@ const Navigation = () => {
   }, [location]);
 
   const navItems = [
-    { path: '/', label: 'Home' },
-    { path: '/library', label: 'Library' },
-    { path: '/map-andromeda', label: 'Andromeda Map' },
+    { path: '/', label: t('home') },
+    { path: '/library', label: t('library') },
+    { path: '/videos', label: t('videos') },
+    { path: '/map-andromeda', label: t('andromedaMap') },
   ];
+
   return (
     <NavContainer
       initial={{ y: -100 }}
@@ -164,8 +205,8 @@ const Navigation = () => {
       transition={{ duration: 0.5 }}
       style={{
         background: scrolled 
-          ? 'rgba(0, 0, 0, 0.98)' 
-          : 'rgba(0, 0, 0, 0.95)',
+          ? 'rgba(6, 9, 18, 0.98)' 
+          : 'rgba(6, 9, 18, 0.95)',
       }}
     >
       <NavContent>
@@ -185,14 +226,19 @@ const Navigation = () => {
               {item.label}
             </NavLink>
           ))}
+          <LanguageButton onClick={toggleLanguage}>
+            {language.toUpperCase()}
+          </LanguageButton>
         </NavLinks>
 
-        <MobileMenuButton
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label="Toggle menu"
-        >
-          {isOpen ? '✕' : '☰'}
-        </MobileMenuButton>
+        <NavActions>
+          <MobileMenuButton
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label="Toggle menu"
+          >
+            {isOpen ? '✕' : '☰'}
+          </MobileMenuButton>
+        </NavActions>
       </NavContent>
     </NavContainer>
   );

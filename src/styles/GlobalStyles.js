@@ -4,22 +4,23 @@ const GlobalStyles = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
   
   :root {
-    --primary-bg: #000000;
-    --secondary-bg: #111111;
-    --tertiary-bg: #1a1a1a;
-    --accent-bg: #2a2a2a;
-    --light-bg: #333333;
-    --primary-text: #ffffff;
-    --secondary-text: #cccccc;
-    --tertiary-text: #999999;
-    --accent-text: #666666;
-    --border-color: #333333;
-    --hover-bg: #222222;
-    --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.5);
-    --shadow-strong: 0 8px 40px rgba(0, 0, 0, 0.8);
+    --primary-bg: #0a0f1c;
+    --secondary-bg: #1a1f2e;
+    --tertiary-bg: #252a3a;
+    --accent-bg: #2d3548;
+    --light-bg: #3a4158;
+    --primary-text: #e8eaf6;
+    --secondary-text: #c5cae9;
+    --tertiary-text: #9fa8da;
+    --accent-text: #7986cb;
+    --border-color: #3f4a5f;
+    --hover-bg: #1e2332;
+    --shadow-soft: 0 4px 20px rgba(10, 15, 28, 0.6);
+    --shadow-strong: 0 8px 40px rgba(10, 15, 28, 0.9);
     --border-radius: 16px;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --nasa-font: 'Orbitron', monospace;
+    --accent-blue: #5c6bc0;
   }
 
   html {
@@ -119,7 +120,7 @@ const GlobalStyles = createGlobalStyle`
 
   /* Selection styles */
   ::selection {
-    background: var(--light-bg);
+    background: var(--accent-blue);
     color: var(--primary-text);
   }
 `;

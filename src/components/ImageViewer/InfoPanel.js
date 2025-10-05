@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 const InfoContainer = styled.div`
+  display: none;
   position: absolute;
   top: 20px;
   right: 20px;

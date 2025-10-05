@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const Card = styled(motion.div)`
   background: var(--secondary-bg);
@@ -23,25 +23,66 @@ const Card = styled(motion.div)`
   }
 `;
 
-const ImageContainer = styled.div`
+const VideoContainer = styled.div`
   position: relative;
-  width: ${props => props.viewMode === 'list' ? '300px' : '100%'};
-  height: ${props => props.viewMode === 'list' ? '200px' : '250px'};
+  width: ${props => props.viewMode === 'list' ? '400px' : '100%'};
+  height: ${props => props.viewMode === 'list' ? '225px' : '200px'};
   flex-shrink: 0;
   overflow: hidden;
+  background: var(--primary-bg);
 `;
 
-const Image = styled.img`
+const VideoThumbnail = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: var(--transition);
-  cursor: pointer;
   user-select: none;
+  cursor: pointer;
 
   &:hover {
     transform: scale(1.05);
   }
+`;
+
+const PlayButton = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-text);
+  font-size: 1.5rem;
+  transition: var(--transition);
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.9);
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+
+  &::before {
+    content: '▶';
+    margin-left: 3px;
+  }
+`;
+
+const Duration = styled.div`
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.8);
+  color: var(--primary-text);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
 `;
 
 const Content = styled.div`
@@ -134,30 +175,6 @@ const ModalContent = styled(motion.div)`
   border-radius: var(--border-radius);
   padding: 2rem;
   border: 1px solid var(--border-color);
-`;
-
-const ModalImage = styled.img`
-  max-width: 100%;
-  max-height: 60vh;
-  object-fit: contain;
-  border-radius: var(--border-radius);
-  margin-bottom: 1rem;
-  user-select: none;
-  cursor: default;
-`;
-
-const ModalTitle = styled.h2`
-  color: var(--primary-text);
-  font-family: var(--nasa-font);
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-`;
-
-const ModalDescription = styled.p`
-  color: var(--secondary-text);
-  font-family: var(--nasa-font);
-  line-height: 1.6;
-  max-height: 150px;
   overflow-y: auto;
 `;
 
@@ -185,40 +202,61 @@ const CloseButton = styled.button`
   }
 `;
 
-const ImageCard = ({ item, index, viewMode = 'grid' }) => {
+const VideoPlayer = styled.video`
+  width: 100%;
+  max-height: 60vh;
+  border-radius: var(--border-radius);
+  margin-bottom: 1rem;
+  user-select: none;
+`;
+
+const ModalTitle = styled.h2`
+  color: var(--primary-text);
+  font-family: var(--nasa-font);
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+`;
+
+const ModalDescription = styled.p`
+  color: var(--secondary-text);
+  font-family: var(--nasa-font);
+  line-height: 1.6;
+  max-height: 150px;
+  overflow-y: auto;
+`;
+
+const VideoCard = ({ item, index, viewMode = 'grid' }) => {
+  const { t } = useLanguage();
   const [showModal, setShowModal] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const navigate = useNavigate();
 
   const data = item.data[0];
   const links = item.links;
   
-  const imageUrl = links?.find(link => link.rel === 'preview')?.href;
-  const fullImageUrl = links?.find(link => link.rel === 'captions')?.href || imageUrl;
+  const thumbnailUrl = links?.find(link => link.rel === 'preview')?.href;
+  const videoUrl = links?.find(link => link.rel === 'captions')?.href;
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'Unknown';
+    if (!dateString) return t('unknown');
     try {
       return new Date(dateString).toLocaleDateString();
     } catch {
-      return 'Unknown';
+      return t('unknown');
     }
   };
 
-  const handleImageClick = () => {
-    if (fullImageUrl && !imageError) {
+  const formatDuration = (seconds) => {
+    if (!seconds) return '';
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const handlePlayVideo = () => {
+    if (videoUrl) {
       setShowModal(true);
     }
   };
-
-  const handleQuickView = () => {
-    setShowModal(true);
-  };
-
-  const handleViewDetails = () => {
-    navigate(`/content/${data.nasa_id}`);
-  };
-
 
   return (
     <>
@@ -229,14 +267,20 @@ const ImageCard = ({ item, index, viewMode = 'grid' }) => {
         transition={{ duration: 0.3, delay: index * 0.1 }}
         whileHover={{ y: -5 }}
       >
-        <ImageContainer viewMode={viewMode}>
-          {imageUrl && !imageError ? (
-            <Image
-              src={imageUrl}
-              alt={data.title}
-              onError={() => setImageError(true)}
-              onClick={handleImageClick}
-            />
+        <VideoContainer viewMode={viewMode}>
+          {thumbnailUrl && !imageError ? (
+            <>
+              <VideoThumbnail
+                src={thumbnailUrl}
+                alt={data.title}
+                onError={() => setImageError(true)}
+                onClick={handlePlayVideo}
+              />
+              <PlayButton onClick={handlePlayVideo} />
+              {data.duration && (
+                <Duration>{formatDuration(data.duration)}</Duration>
+              )}
+            </>
           ) : (
             <div
               style={{
@@ -251,10 +295,10 @@ const ImageCard = ({ item, index, viewMode = 'grid' }) => {
                 border: '1px solid var(--border-color)'
               }}
             >
-              No Image
+              🎬
             </div>
           )}
-        </ImageContainer>
+        </VideoContainer>
 
         <Content>
           <Title>{data.title}</Title>
@@ -271,30 +315,18 @@ const ImageCard = ({ item, index, viewMode = 'grid' }) => {
             {data.center && (
               <MetadataItem>{data.center}</MetadataItem>
             )}
-            {data.media_type && (
-              <MetadataItem>{data.media_type}</MetadataItem>
-            )}
+            <MetadataItem>{t('video')}</MetadataItem>
           </Metadata>
 
           <Actions>
-            {!imageError && (
-              <>
-                <ActionButton onClick={handleQuickView}>
-                  Quick View
-                </ActionButton>
-                <ActionButton onClick={handleViewDetails}>
-                  View Details
-                </ActionButton>
-                <ActionButton onClick={handleImageClick}>
-                  Full Size
-                </ActionButton>
-              </>
-            )}
+            <ActionButton onClick={handlePlayVideo}>
+              {t('playVideo')}
+            </ActionButton>
           </Actions>
         </Content>
       </Card>
 
-      {showModal && (imageUrl || fullImageUrl) && createPortal(
+      {showModal && videoUrl && createPortal(
         <AnimatePresence>
           <Modal
             initial={{ opacity: 0 }}
@@ -311,7 +343,12 @@ const ImageCard = ({ item, index, viewMode = 'grid' }) => {
               <CloseButton onClick={() => setShowModal(false)}>
                 ×
               </CloseButton>
-              <ModalImage src={fullImageUrl || imageUrl} alt={data.title} />
+              <VideoPlayer
+                src={videoUrl}
+                controls
+                autoPlay
+                poster={thumbnailUrl}
+              />
               <ModalTitle>{data.title}</ModalTitle>
               {data.description && (
                 <ModalDescription>{data.description}</ModalDescription>
@@ -325,4 +362,4 @@ const ImageCard = ({ item, index, viewMode = 'grid' }) => {
   );
 };
 
-export default ImageCard;
+export default VideoCard;

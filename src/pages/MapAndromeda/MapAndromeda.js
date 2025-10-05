@@ -89,7 +89,8 @@ const GalaxyInfo = styled.div`
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   padding: 1rem;
-  margin-bottom: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 0;
 `;
 
 const GalaxyTitle = styled.h4`
@@ -151,14 +152,14 @@ const MapAndromeda = () => {
             onGalaxySelect={handleGalaxySelect}
             selectedGalaxy={selectedGalaxy}
           />
+          
+          {selectedGalaxy && (
+            <GalaxyInfo>
+              <GalaxyTitle>{selectedGalaxy.name}</GalaxyTitle>
+              <GalaxyDescription>{selectedGalaxy.description}</GalaxyDescription>
+            </GalaxyInfo>
+          )}
         </GalaxySelectorContainer>
-
-        {selectedGalaxy && (
-          <GalaxyInfo>
-            <GalaxyTitle>{selectedGalaxy.name}</GalaxyTitle>
-            <GalaxyDescription>{selectedGalaxy.description}</GalaxyDescription>
-          </GalaxyInfo>
-        )}
 
         <InfoSection>
           <InfoTitle>Navigation Controls</InfoTitle>

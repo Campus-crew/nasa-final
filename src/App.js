@@ -8,9 +8,13 @@ import Navigation from './components/Navigation/Navigation';
 import LandingPage from './pages/LandingPage/LandingPage';
 import PlanetSearch from './pages/PlanetSearch/PlanetSearch';
 import Library from './pages/Library/Library';
+import VideoLibrary from './pages/VideoLibrary/VideoLibrary';
 import ContentDetail from './pages/ContentDetail/ContentDetail';
 import MapAndromeda from './pages/MapAndromeda/MapAndromeda';
 import Footer from './components/Footer/Footer';
+
+// Context
+import { LanguageProvider } from './contexts/LanguageContext';
 
 const AppContainer = styled.div`
   min-height: 100vh;
@@ -50,7 +54,8 @@ function App() {
   const isAndromedaPage = location.pathname === '/map-andromeda';
 
   return (
-    <AppContainer>
+    <LanguageProvider>
+      <AppContainer>
       {!isAndromedaPage && <Navigation />}
       <MainContent>
         <AnimatePresence mode="wait">
@@ -98,6 +103,20 @@ function App() {
               } 
             />
             <Route 
+              path="/videos" 
+              element={
+                <motion.div
+                  initial="initial"
+                  animate="in"
+                  exit="out"
+                  variants={pageVariants}
+                  transition={pageTransition}
+                >
+                  <VideoLibrary />
+                </motion.div>
+              } 
+            />
+            <Route 
               path="/content/:id" 
               element={
                 <motion.div
@@ -130,6 +149,7 @@ function App() {
       </MainContent>
       {!isAndromedaPage && <Footer />}
     </AppContainer>
+    </LanguageProvider>
   );
 }
 

@@ -5,7 +5,8 @@ import { useQuery } from 'react-query';
 import { nasaApiService } from '../../services/nasaApi';
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 import SearchBar from '../../components/SearchBar/SearchBar';
-import ImageCard from '../../components/ImageCard/ImageCard';
+import VideoCard from '../../components/VideoCard/VideoCard';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -98,24 +99,24 @@ const ViewButton = styled.button`
   }
 `;
 
-const ImagesGrid = styled.div`
+const VideosGrid = styled.div`
   display: grid;
   grid-template-columns: ${props => 
     props.view === 'grid' 
-      ? 'repeat(auto-fill, minmax(280px, 1fr))' 
+      ? 'repeat(auto-fill, minmax(350px, 1fr))' 
       : '1fr'
   };
-  gap: 1.5rem;
+  gap: 2rem;
   margin-bottom: 3rem;
   width: 100%;
   
   @media (max-width: 768px) {
     grid-template-columns: ${props => 
       props.view === 'grid' 
-        ? 'repeat(auto-fill, minmax(250px, 1fr))' 
+        ? 'repeat(auto-fill, minmax(300px, 1fr))' 
         : '1fr'
     };
-    gap: 1rem;
+    gap: 1.5rem;
   }
 `;
 
@@ -163,16 +164,17 @@ const EmptyState = styled(motion.div)`
   }
 `;
 
-const Library = () => {
+const VideoLibrary = () => {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [viewMode, setViewMode] = useState('grid');
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Fetch NASA images
-  const { data: imagesData, isLoading, error } = useQuery(
-    ['nasa-images', searchQuery, currentPage],
-    () => nasaApiService.searchImages(searchQuery || 'space', currentPage),
+  // Fetch NASA videos
+  const { data: videosData, isLoading, error } = useQuery(
+    ['nasa-videos', searchQuery, currentPage],
+    () => nasaApiService.searchVideos(searchQuery || 'space', currentPage),
     {
       staleTime: 5 * 60 * 1000, // 5 minutes
       keepPreviousData: true,
@@ -180,14 +182,14 @@ const Library = () => {
   );
 
   const categories = [
-    { key: 'all', label: 'All Objects', query: '' },
-    { key: 'planets', label: 'Planets', query: 'planet' },
-    { key: 'galaxies', label: 'Galaxies', query: 'galaxy' },
-    { key: 'nebulae', label: 'Nebulae', query: 'nebula' },
-    { key: 'mars', label: 'Mars', query: 'mars' },
-    { key: 'earth', label: 'Earth', query: 'earth' },
-    { key: 'hubble', label: 'Hubble', query: 'hubble' },
-    { key: 'apollo', label: 'Apollo', query: 'apollo' },
+    { key: 'all', label: t('allVideos'), query: '' },
+    { key: 'planets', label: t('planets'), query: 'planet solar system' },
+    { key: 'galaxies', label: t('galaxies'), query: 'galaxy milky way andromeda' },
+    { key: 'stars', label: t('stars'), query: 'star sun solar' },
+    { key: 'nebulae', label: t('nebulae'), query: 'nebula cosmic dust' },
+    { key: 'mars', label: t('mars'), query: 'mars martian surface' },
+    { key: 'hubble', label: t('hubble'), query: 'hubble telescope deep space' },
+    { key: 'jwst', label: t('jwst'), query: 'james webb telescope infrared' },
   ];
 
   const handleCategoryChange = (category) => {
@@ -200,8 +202,10 @@ const Library = () => {
     setCurrentPage(prev => prev + 1);
   };
 
-  const images = imagesData?.collection?.items || [];
-  const totalHits = imagesData?.collection?.metadata?.total_hits || 0;
+  const videos = videosData?.collection?.items?.filter(item => 
+    item.data[0]?.media_type === 'video'
+  ) || [];
+  const totalHits = videosData?.collection?.metadata?.total_hits || 0;
 
   if (error) {
     return (
@@ -210,9 +214,9 @@ const Library = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <span className="icon">!</span>
-          <h3>Error Loading Objects</h3>
-          <p>Unable to fetch NASA object library. Please try again later.</p>
+          <span className="icon">❌</span>
+          <h3>{t('errorLoadingVideos')}</h3>
+          <p>{t('unableToFetchVideos')}</p>
         </EmptyState>
       </PageContainer>
     );
@@ -226,14 +230,14 @@ const Library = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          NASA Object Library
+          {t('nasaVideoLibrary')}
         </PageTitle>
         <PageSubtitle
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          Explore NASA's vast collection of space objects, from stunning planetary photos to deep space telescope captures and historic mission documentation.
+          {t('videoLibrarySubtitle')}
         </PageSubtitle>
       </PageHeader>
 
@@ -244,7 +248,7 @@ const Library = () => {
             setSearchQuery(value);
             setCurrentPage(1);
           }}
-          placeholder="Search NASA object library..."
+          placeholder={t('searchVideosPlaceholder')}
         />
       </SearchSection>
 
@@ -266,31 +270,31 @@ const Library = () => {
         <>
           <ResultsHeader>
             <ResultsCount>
-              {totalHits > 0 ? `${totalHits.toLocaleString()} objects found` : 'No objects found'}
-              {searchQuery && searchQuery.trim() && ` for "${searchQuery}"`}
+              {totalHits > 0 ? `${totalHits.toLocaleString()} ${t('videosFound')}` : t('noVideosFound')}
+              {searchQuery && searchQuery.trim() && ` ${t('for')} "${searchQuery}"`}
             </ResultsCount>
             <ViewToggle>
               <ViewButton
                 active={viewMode === 'grid'}
                 onClick={() => setViewMode('grid')}
               >
-                Grid
+                {t('grid')}
               </ViewButton>
               <ViewButton
                 active={viewMode === 'list'}
                 onClick={() => setViewMode('list')}
               >
-                List
+                {t('list')}
               </ViewButton>
             </ViewToggle>
           </ResultsHeader>
 
-          {images.length > 0 ? (
+          {videos.length > 0 ? (
             <>
-              <ImagesGrid view={viewMode}>
+              <VideosGrid view={viewMode}>
                 <AnimatePresence>
-                  {images.map((item, index) => (
-                    <ImageCard
+                  {videos.map((item, index) => (
+                    <VideoCard
                       key={`${item.data[0]?.nasa_id}-${index}`}
                       item={item}
                       index={index}
@@ -298,16 +302,16 @@ const Library = () => {
                     />
                   ))}
                 </AnimatePresence>
-              </ImagesGrid>
+              </VideosGrid>
 
-              {images.length < totalHits && (
+              {videos.length < totalHits && (
                 <LoadMoreButton
                   onClick={handleLoadMore}
                   disabled={isLoading}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  {isLoading ? 'Loading...' : 'Load More Objects'}
+                  {isLoading ? t('loading') : t('loadMoreVideos')}
                 </LoadMoreButton>
               )}
             </>
@@ -316,9 +320,9 @@ const Library = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <span className="icon">?</span>
-              <h3>No Objects Found</h3>
-              <p>Try adjusting your search terms or browse different categories.</p>
+              <span className="icon">🎬</span>
+              <h3>{t('noVideosFound')}</h3>
+              <p>{t('tryAdjustingVideo')}</p>
             </EmptyState>
           )}
         </>
@@ -327,4 +331,4 @@ const Library = () => {
   );
 };
 
-export default Library;
+export default VideoLibrary;

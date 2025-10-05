@@ -6,6 +6,7 @@ import { useQuery } from 'react-query';
 import { nasaApiService } from '../../services/nasaApi';
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 import AnimatedText from '../../components/AnimatedText/AnimatedText';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const LandingContainer = styled.div`
   min-height: 100vh;
@@ -264,6 +265,7 @@ const MemberRole = styled.p`
 `;
 
 const LandingPage = () => {
+  const { t } = useLanguage();
   const { data: apodData, isLoading: apodLoading } = useQuery(
     'apod',
     () => nasaApiService.getAPOD(),
@@ -274,26 +276,25 @@ const LandingPage = () => {
 
   const features = [
     {
-      title: 'Explore Exoplanets',
-      description: 'Discover thousands of planets beyond our solar system with detailed information about their characteristics and host stars.',
+      title: t('exploreExoplanets'),
+      description: t('exploreExoplanetsDesc'),
     },
     {
-      title: 'NASA Content Library',
-      description: 'Browse through an extensive collection of stunning space content, from Mars rover photos to deep space telescopes.',
+      title: t('nasaContentLibrary'),
+      description: t('nasaContentLibraryDesc'),
     },
     {
-      title: 'Real-time Data',
-      description: 'Access live NASA APIs for the latest discoveries, astronomical events, and space mission updates.',
+      title: t('realTimeData'),
+      description: t('realTimeDataDesc'),
     },
   ];
 
   const teamMembers = [
-    { name: 'Neil Armstrong', role: 'Mission Commander', initials: 'NA', linkedin: 'https://linkedin.com/in/neil-armstrong' },
-    { name: 'Buzz Aldrin', role: 'Lunar Module Pilot', initials: 'BA', linkedin: 'https://linkedin.com/in/buzz-aldrin' },
-    { name: 'Michael Collins', role: 'Command Module Pilot', initials: 'MC', linkedin: 'https://linkedin.com/in/michael-collins' },
-    { name: 'John Glenn', role: 'Orbital Pioneer', initials: 'JG', linkedin: 'https://linkedin.com/in/john-glenn' },
-    { name: 'Sally Ride', role: 'Space Shuttle Specialist', initials: 'SR', linkedin: 'https://linkedin.com/in/sally-ride' },
-    { name: 'Mae Jemison', role: 'Science Mission Specialist', initials: 'MJ', linkedin: 'https://linkedin.com/in/mae-jemison' },
+    { name: 'Dulatuly Nurasyl', role: 'Project Lead', initials: 'DN', linkedin: 'https://linkedin.com/in/dulatuly-nurasyl' },
+    { name: 'Yergaliyeva Dariya', role: 'Frontend Developer', initials: 'YD', linkedin: 'https://linkedin.com/in/yergaliyeva-dariya' },
+    { name: 'Yerlepes Bek', role: 'Backend Developer', initials: 'YB', linkedin: 'https://linkedin.com/in/yerlepes-bek' },
+    { name: 'Bazhikey Assel', role: 'UI/UX Designer', initials: 'BA', linkedin: 'https://linkedin.com/in/bazhikey-assel' },
+    { name: 'Serdar Dundar', role: 'Frontend Developer', initials: 'SD', linkedin: 'https://linkedin.com/in/serdar-dundar' },
   ];
 
   return (
@@ -305,6 +306,7 @@ const LandingPage = () => {
           loop
           playsInline
         >
+          <source src="https://images-assets.nasa.gov/video/NHQ_2024_0101_New%20Year%20Message%20from%20NASA%20Administrator%20Bill%20Nelson/NHQ_2024_0101_New%20Year%20Message%20from%20NASA%20Administrator%20Bill%20Nelson~orig.mp4" type="video/mp4" />
           <source src="/nasa-highlights-2024.mp4" type="video/mp4" />
         </BackgroundVideo>
         <VideoOverlay />
@@ -333,18 +335,18 @@ const LandingPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            Discover exoplanets, browse NASA's image library, and explore the wonders of space through cutting-edge APIs and real-time data.
+            {t('heroSubtitle')}
           </HeroSubtitle>
           <CTAButtons
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
-            <CTAButton to="/library">
-              Browse Library
+            <CTAButton to="/library" className="primary">
+              {t('browseLibrary')}
             </CTAButton>
-            <CTAButton to="/map-andromeda" style={{ background: 'var(--secondary-bg)', border: '2px solid var(--border-color)' }}>
-              Explore Andromeda
+            <CTAButton to="/map-andromeda" className="secondary">
+              {t('exploreAndromeda')}
             </CTAButton>
           </CTAButtons>
         </HeroContent>
@@ -357,7 +359,7 @@ const LandingPage = () => {
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          Features
+          {t('featuresTitle')}
         </SectionTitle>
         <FeaturesGrid>
           {features.map((feature, index) => (
@@ -383,7 +385,7 @@ const LandingPage = () => {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            Astronomy Picture of the Day
+            {t('apodTitle')}
           </SectionTitle>
           {apodLoading ? (
             <LoadingSpinner />
