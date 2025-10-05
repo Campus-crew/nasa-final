@@ -349,10 +349,10 @@ const LandingPage = () => {
             minHeight: '100%'
           }}
         >
-          {/* Using local NASA video */}
+          {/* Using NASA SpaceX Crew Transportation video */}
+          <source src="https://images-assets.nasa.gov/video/NASA%20Certifies%20SpaceX%20Crew%20Transportation%20System%20for%20Regular%20Astronaut%20Flights%20to%20Space/NASA%20Certifies%20SpaceX%20Crew%20Transportation%20System%20for%20Regular%20Astronaut%20Flights%20to%20Space~orig.mp4" type="video/mp4" />
+          {/* Fallback to local video if NASA video fails */}
           <source src="/video.mp4" type="video/mp4" />
-          {/* Fallback to external sources if local video fails */}
-          <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </BackgroundVideo>
         <VideoOverlay />
