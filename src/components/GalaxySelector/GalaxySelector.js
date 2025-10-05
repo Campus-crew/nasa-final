@@ -172,7 +172,7 @@ const GalaxySelector = ({ onGalaxySelect, selectedGalaxy }) => {
         {
           id: 'andromeda-fallback',
           name: 'Andromeda Galaxy (M31)',
-          filename: 'andromeda_placeholder.jpg',
+          filename: 'https://assets.science.nasa.gov/content/dam/science/missions/hubble/galaxies/andromeda/Hubble_M31Mosaic_2025_42208x9870_STScI-01JGY8MZB6RAYKZ1V4CHGN37Q6.jpg',
           description: 'The Andromeda Galaxy, also known as M31, is our nearest major galactic neighbor at 2.5 million light-years away.',
           imageUrl: 'https://assets.science.nasa.gov/content/dam/science/missions/hubble/galaxies/andromeda/Hubble_M31Mosaic_2025_42208x9870_STScI-01JGY8MZB6RAYKZ1V4CHGN37Q6.jpg',
           thumbnailUrl: 'https://apod.nasa.gov/apod/image/1909/M31_HubblePhat_1080.jpg'
