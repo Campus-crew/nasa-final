@@ -33,7 +33,7 @@ const ImageViewer = ({ selectedGalaxy }) => {
     return {
       width: 42208,
       height: 9870,
-      originalPath: 'Hubble_M31Mosaic_2025_42208x9870_STScI-01JGY8MZB6RAYKZ1V4CHGN37Q6.jpg',
+      originalPath: 'https://assets.science.nasa.gov/content/dam/science/missions/hubble/galaxies/andromeda/Hubble_M31Mosaic_2025_42208x9870_STScI-01JGY8MZB6RAYKZ1V4CHGN37Q6.jpg',
       name: 'Andromeda Galaxy'
     };
   }, [selectedGalaxy]);

@@ -24,7 +24,7 @@ const IMAGES = {
     name: 'High Resolution', 
     width: 42208,
     height: 9870,
-    src: 'Hubble_M31Mosaic_2025_42208x9870_STScI-01JGY8MZB6RAYKZ1V4CHGN37Q6.jpg',
+    src: 'https://assets.science.nasa.gov/content/dam/science/missions/hubble/galaxies/andromeda/Hubble_M31Mosaic_2025_42208x9870_STScI-01JGY8MZB6RAYKZ1V4CHGN37Q6.jpg',
     zoomRange: [1.0, 3.0]
   }
 };

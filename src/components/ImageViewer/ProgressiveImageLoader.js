@@ -3,8 +3,8 @@ class ProgressiveImageLoader {
     this.imageCache = new Map();
     this.loadingPromises = new Map();
     this.qualityLevels = {
-      low: 'Hubble_M31Mosaic_2025_10552x2468_STScI-01JGY92V0Z2HJTVH605N4WH9XQ.jpg',
-      high: 'Hubble_M31Mosaic_2025_42208x9870_STScI-01JGY8MZB6RAYKZ1V4CHGN37Q6.jpg'
+      low: '/media/Hubble_M31Mosaic_2025_10552x2468_STScI-01JGY92V0Z2HJTVH605N4WH9XQ.jpg',
+      high: 'https://assets.science.nasa.gov/content/dam/science/missions/hubble/galaxies/andromeda/Hubble_M31Mosaic_2025_42208x9870_STScI-01JGY8MZB6RAYKZ1V4CHGN37Q6.jpg'
     };
     this.imageDimensions = {
       low: { width: 10552, height: 2468 },
