@@ -349,9 +349,10 @@ const LandingPage = () => {
             minHeight: '100%'
           }}
         >
-          {/* Using external video sources */}
+          {/* Using local NASA video */}
+          <source src="/video.mp4" type="video/mp4" />
+          {/* Fallback to external sources if local video fails */}
           <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
-          <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </BackgroundVideo>
         <VideoOverlay />
