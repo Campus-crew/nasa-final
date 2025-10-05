@@ -23,6 +23,8 @@ yarn-debug.log*
 yarn-error.log*
  
 # app static assets (do not push large media)
-/public/media/
 public/*.mp4
 /public/files/
+# Exclude very large images (>100MB)
+public/media/*42208x9870*
+public/media/*_large.*
