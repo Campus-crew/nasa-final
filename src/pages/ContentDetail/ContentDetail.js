@@ -151,26 +151,44 @@ const ContentDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Mock content data - in real app, fetch by ID
-  const contentData = {
-    id,
-    title: 'Hubble Space Telescope Captures Stunning Galaxy Collision',
-    description: `The Hubble Space Telescope has captured an extraordinary image of two galaxies in the process of merging, located approximately 230 million light-years away in the constellation Hercules. This cosmic dance, known as NGC 6052, showcases the violent yet beautiful process of galactic evolution.
+  // Fetch actual content data by NASA ID
+  const { data: contentData, isLoading, error } = useQuery(
+    ['nasa-content', id],
+    () => nasaApiService.getAssetById(id),
+    {
+      enabled: !!id,
+      staleTime: 10 * 60 * 1000, // 10 minutes
+    }
+  );
 
-When galaxies collide, they don't actually crash into each other like cars in an accident. Instead, their gravitational forces interact over millions of years, slowly pulling and distorting each other's shapes. The stars within each galaxy rarely collide due to the vast distances between them, but the gravitational interactions can trigger intense bursts of star formation.
+  if (isLoading) {
+    return (
+      <DetailContainer>
+        <BackButton onClick={() => navigate(-1)}>
+          ← Back to Library
+        </BackButton>
+        <LoadingSpinner />
+      </DetailContainer>
+    );
+  }
 
-This particular merger is in its early stages, with the two galactic cores still visible as distinct bright regions. Over the next billion years, these galaxies will continue their cosmic ballet, eventually forming a single, larger elliptical galaxy. The process will redistribute stars, gas, and dust, creating new stellar nurseries and potentially feeding the supermassive black holes at each galaxy's center.
+  if (error || !contentData) {
+    return (
+      <DetailContainer>
+        <BackButton onClick={() => navigate(-1)}>
+          ← Back to Library
+        </BackButton>
+        <div style={{ textAlign: 'center', padding: '4rem 2rem', color: 'var(--secondary-text)' }}>
+          <h3 style={{ color: 'var(--primary-text)', marginBottom: '1rem' }}>Content Not Found</h3>
+          <p>The requested NASA content could not be found or loaded.</p>
+        </div>
+      </DetailContainer>
+    );
+  }
 
-The image was captured using Hubble's Wide Field Camera 3, which can observe in both visible and near-infrared light. This allows astronomers to peer through cosmic dust and see the underlying structure of these merging systems. The blue regions indicate areas of active star formation, where hot, young stars are being born from compressed gas and dust.`,
-    imageUrl: 'https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-    date: '2024-01-15',
-    center: 'Goddard Space Flight Center',
-    photographer: 'NASA/ESA Hubble Space Telescope',
-    keywords: ['galaxy', 'merger', 'hubble', 'space telescope', 'astronomy'],
-    location: 'Constellation Hercules',
-    distance: '230 million light-years',
-    catalogId: 'NGC 6052'
-  };
+  const data = contentData.collection?.items?.[0]?.data?.[0] || {};
+  const links = contentData.collection?.items?.[0]?.links || [];
+  const imageUrl = links.find(link => link.rel === 'preview')?.href;
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -181,20 +199,21 @@ The image was captured using Hubble's Wide Field Camera 3, which can observe in 
   };
 
   const handleDownload = () => {
-    // Mock download functionality
-    const link = document.createElement('a');
-    link.href = contentData.imageUrl;
-    link.download = `nasa-${contentData.id}.jpg`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    if (imageUrl) {
+      const link = document.createElement('a');
+      link.href = imageUrl;
+      link.download = `nasa-${data.nasa_id || id}.jpg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: contentData.title,
-        text: contentData.description.substring(0, 200) + '...',
+        title: data.title || 'NASA Content',
+        text: (data.description || '').substring(0, 200) + '...',
         url: window.location.href,
       });
     } else {
@@ -215,52 +234,67 @@ The image was captured using Hubble's Wide Field Camera 3, which can observe in 
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          {contentData.title}
+          {data.title || 'NASA Content'}
         </ContentTitle>
         
         <ContentMeta>
-          <MetaItem>{formatDate(contentData.date)}</MetaItem>
-          <MetaItem>{contentData.center}</MetaItem>
-          <MetaItem>{contentData.photographer}</MetaItem>
+          {data.date_created && <MetaItem>{formatDate(data.date_created)}</MetaItem>}
+          {data.center && <MetaItem>{data.center}</MetaItem>}
+          {data.photographer && <MetaItem>{data.photographer}</MetaItem>}
+          {data.media_type && <MetaItem>{data.media_type}</MetaItem>}
         </ContentMeta>
       </ContentHeader>
 
       <ContentBody>
         <MainContent>
-          <ContentImage
-            src={contentData.imageUrl}
-            alt={contentData.title}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          />
+          {imageUrl && (
+            <ContentImage
+              src={imageUrl}
+              alt={data.title || 'NASA Content'}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            />
+          )}
           
           <ContentDescription>
-            {contentData.description.split('\n\n').map((paragraph, index) => (
-              <p key={index}>{paragraph}</p>
-            ))}
+            {data.description ? (
+              data.description.split('\n\n').map((paragraph, index) => (
+                <p key={index}>{paragraph}</p>
+              ))
+            ) : (
+              <p>No description available for this NASA content.</p>
+            )}
           </ContentDescription>
         </MainContent>
 
         <Sidebar>
           <SidebarTitle>Details</SidebarTitle>
           <InfoGrid>
-            <InfoItem>
-              <div className="label">Location</div>
-              <div className="value">{contentData.location}</div>
-            </InfoItem>
-            <InfoItem>
-              <div className="label">Distance</div>
-              <div className="value">{contentData.distance}</div>
-            </InfoItem>
-            <InfoItem>
-              <div className="label">Catalog ID</div>
-              <div className="value">{contentData.catalogId}</div>
-            </InfoItem>
-            <InfoItem>
-              <div className="label">Keywords</div>
-              <div className="value">{contentData.keywords.join(', ')}</div>
-            </InfoItem>
+            {data.nasa_id && (
+              <InfoItem>
+                <div className="label">NASA ID</div>
+                <div className="value">{data.nasa_id}</div>
+              </InfoItem>
+            )}
+            {data.location && (
+              <InfoItem>
+                <div className="label">Location</div>
+                <div className="value">{data.location}</div>
+              </InfoItem>
+            )}
+            {data.secondary_creator && (
+              <InfoItem>
+                <div className="label">Creator</div>
+                <div className="value">{data.secondary_creator}</div>
+              </InfoItem>
+            )}
+            {data.keywords && data.keywords.length > 0 && (
+              <InfoItem>
+                <div className="label">Keywords</div>
+                <div className="value">{data.keywords.join(', ')}</div>
+              </InfoItem>
+            )}
           </InfoGrid>
 
           <ActionButtons>

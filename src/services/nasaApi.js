@@ -22,6 +22,21 @@ export const nasaApiService = {
     }
   },
 
+  // Get specific NASA asset by ID
+  getAssetById: async (nasaId) => {
+    try {
+      const response = await axios.get(`https://images-api.nasa.gov/search`, {
+        params: {
+          nasa_id: nasaId,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching NASA asset by ID:', error);
+      throw error;
+    }
+  },
+
   // NASA Video Library API
   searchVideos: async (query = 'space', page = 1) => {
     try {
