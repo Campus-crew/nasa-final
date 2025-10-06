@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Analytics } from '@vercel/analytics/react';
 
 // Components
 import Navigation from './components/Navigation/Navigation';
@@ -148,6 +149,7 @@ function App() {
         </AnimatePresence>
       </MainContent>
       {!isAndromedaPage && <Footer />}
+      <Analytics />
     </AppContainer>
     </LanguageProvider>
   );
